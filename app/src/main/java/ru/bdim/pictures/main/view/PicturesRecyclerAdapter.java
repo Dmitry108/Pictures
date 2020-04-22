@@ -49,13 +49,10 @@ public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHol
 
         public PictureViewHolder(@NonNull final View itemView) {
             super(itemView);
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    listener.onItemClick(getAdapterPosition());
-                    return false;
-                }
-            });
+            itemView.setOnLongClickListener((v -> {
+                listener.onItemClick(getAdapterPosition());
+                return false;
+            }));
         }
     }
     public interface OnItemClickListener{

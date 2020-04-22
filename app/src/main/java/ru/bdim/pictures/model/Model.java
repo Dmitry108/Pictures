@@ -10,12 +10,11 @@ import ru.bdim.pictures.source.PictureSource;
 
 public class Model {
 
-    private static Model instance;
     private List<Integer> pictures;
     private List<Integer> frequencyList;
     private int currentPosition;
 
-    private Model(){
+    public Model(){
         PictureSource source = new PictureSource();
         pictures = source.getPicturesList();
         frequencyList = new ArrayList<>();
@@ -27,12 +26,7 @@ public class Model {
             frequencyList.add(0);
         }
     }
-    public static Model getInstance(){
-        if (instance == null){
-            instance = new Model();
-        }
-        return instance;
-    }
+
     public int increase(int position) {
         currentPosition = position;
         frequencyList.set(position, frequencyList.get(position) + 1);
@@ -40,7 +34,7 @@ public class Model {
     }
     public Single<Integer> getPicture(final int index){
         return Single.create((SingleOnSubscribe<Integer>) emitter ->
-                emitter.onSuccess(instance.pictures.get(index))
+                emitter.onSuccess(pictures.get(index))
         ).subscribeOn(Schedulers.io());
     }
     public List<Integer> getPicturesList() {
