@@ -6,6 +6,7 @@ import java.util.List;
 
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
+import ru.bdim.pictures.detail.application.PictureApp;
 import ru.bdim.pictures.main.view.MainView;
 import ru.bdim.pictures.model.Const;
 import ru.bdim.pictures.model.Model;
@@ -16,7 +17,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private Model model;
 
     public MainPresenter(){
-        model = Model.getInstance();
+        model = PictureApp.getInstance().getModel();
     }
 
     public void setChoice(final int position) {
