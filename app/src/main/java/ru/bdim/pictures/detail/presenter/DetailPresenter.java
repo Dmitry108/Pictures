@@ -23,8 +23,8 @@ public class DetailPresenter extends MvpPresenter<DetailView> {
     public void setPicture(){
         int index = model.getCurrentPosition();
         Log.d(Const.TAG, String.valueOf(index));
-        Disposable d = model.getPicture(model.getCurrentPosition())
+        Disposable d = model.getPicture()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(id -> getViewState().setPicture(id));
+                .subscribe(url -> getViewState().setPicture(url));
     }
 }

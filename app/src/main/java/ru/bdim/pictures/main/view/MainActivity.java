@@ -34,8 +34,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         initRecycler();
     }
     private void initRecycler() {
-        recycler.setHasFixedSize(true);
-        adapter = new PicturesRecyclerAdapter(presenter);
+        adapter = new PicturesRecyclerAdapter(presenter.getPictureRecyclerPresenter());
         GridLayoutManager manager = new GridLayoutManager(this, 2);
         recycler.setLayoutManager(manager);
         adapter.setListener(position -> presenter.setChoice(position));
@@ -45,6 +44,10 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     public void showPicture() {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         startActivity(intent);
+    }
+    @Override
+    public void notifyNewPictures() {
+        adapter.notifyDataSetChanged();
     }
     @Override
     protected void onDestroy() {

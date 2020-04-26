@@ -7,5 +7,5 @@ import moxy.viewstate.strategy.StateStrategyType;
 public interface DetailView extends MvpView {
 
     @StateStrategyType(value = AddToEndSingleStrategy.class)
-    void setPicture(int id);
+    void setPicture(String url);
 }

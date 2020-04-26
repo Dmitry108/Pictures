@@ -8,4 +8,7 @@ public interface MainView extends MvpView {
 
     @StateStrategyType(value = AddToEndSingleStrategy.class)
     void showPicture();
+
+    @StateStrategyType(value = AddToEndSingleStrategy.class)
+    void notifyNewPictures();
 }
