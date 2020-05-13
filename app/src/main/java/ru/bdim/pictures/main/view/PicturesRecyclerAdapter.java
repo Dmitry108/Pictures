@@ -9,10 +9,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import com.squareup.picasso.Picasso;
+
 import ru.bdim.pictures.R;
 import ru.bdim.pictures.main.presenter.IPictureRecyclerPresenter;
 import ru.bdim.pictures.main.view.PicturesRecyclerAdapter.PictureViewHolder;
-import ru.bdim.pictures.model.PictureLoader;
 
 public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHolder> {
 
@@ -58,7 +59,8 @@ public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHol
         }
         @Override
         public void setImage(String url) {
-            PictureLoader.setPicture(url, imageView);
+            //PictureLoader.setPicture(url, imageView);
+            Picasso.with(imageView.getContext()).load(url).into(imageView);
         }
         @Override
         public int getIndex() {
