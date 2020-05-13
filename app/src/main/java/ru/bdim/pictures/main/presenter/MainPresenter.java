@@ -5,8 +5,9 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -24,13 +25,14 @@ import static ru.bdim.pictures.model.Const.TAG;
 @InjectViewState
 public class MainPresenter extends MvpPresenter<MainView> {
 
-    private Model model;
+    @Inject
+    Model model;
+
     private List<String> pictures;
     private PictureRecyclerPresenter recyclerPresenter;
 
     public MainPresenter(){
-        model = PictureApp.getModel();
-
+        PictureApp.getComponent().inject(this);
         recyclerPresenter = new PictureRecyclerPresenter();
     }
 

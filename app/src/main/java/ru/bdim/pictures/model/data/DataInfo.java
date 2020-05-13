@@ -19,10 +19,6 @@ public class DataInfo {
         }
     }
 
-    public List<Integer> getArray(){
-        return frequencyList;
-    }
-
     public int setCurrentChoice (int position, String url) {
         currentPosition = position;
         pictureUrl = url;

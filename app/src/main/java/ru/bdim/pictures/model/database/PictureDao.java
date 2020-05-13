@@ -1,7 +1,6 @@
 package ru.bdim.pictures.model.database;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -17,9 +16,9 @@ public interface PictureDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<List<Long>> addAll(List<PictureEntity> pictureEntity);
 
-@Query("DELETE FROM pictures WHERE id > 0")
+    @Query("DELETE FROM pictures WHERE id > 0")
     Single<Integer> deleteAll();
 
-@Query("SELECT * FROM pictures")
+    @Query("SELECT * FROM pictures")
     Observable<List<PictureEntity>> getAll();
 }

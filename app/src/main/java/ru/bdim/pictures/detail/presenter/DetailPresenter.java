@@ -2,6 +2,8 @@ package ru.bdim.pictures.detail.presenter;
 
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
 import ru.bdim.pictures.application.PictureApp;
@@ -12,10 +14,11 @@ import ru.bdim.pictures.model.Model;
 @InjectViewState
 public class DetailPresenter extends MvpPresenter<DetailView> {
 
-    private Model model;
+    @Inject
+    Model model;
 
     public DetailPresenter(){
-        model = PictureApp.getModel();
+        PictureApp.getComponent().inject(this);
     }
 
     public void setPicture(){

@@ -15,13 +15,10 @@ public class PictureEntity {
     @ColumnInfo(name = "url")
     private String url;
 
-//    public PictureEntity(int id, String url) {
-//        this.id = id;
-//        this.url = url;
-//    }
     public PictureEntity(String url) {
         this.url = url;
     }
+
     public int getId() {
         return id;
     }
