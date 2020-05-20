@@ -14,11 +14,20 @@ public class HitRequest {
     @SerializedName("hits")
     private List<Hit> hits;
 
+    public HitRequest(){
+        hits = new ArrayList<>();
+    }
+
     public List<String> getHits(){
         List<String> list = new ArrayList<>();
         for (Hit hit: hits){
             list.add(hit.getURL());
         }
         return list;
+    }
+    public void setHits(List<String> list){
+        for (String s: list){
+            hits.add(new Hit(s));
+        }
     }
 }

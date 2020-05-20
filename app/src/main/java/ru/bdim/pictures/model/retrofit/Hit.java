@@ -8,6 +8,10 @@ public class Hit {
     @SerializedName("webformatURL")
     private String webformatURL;
 
+    public Hit(String webformatURL) {
+        this.webformatURL = webformatURL;
+    }
+
     public String getURL(){
         return webformatURL;
     }

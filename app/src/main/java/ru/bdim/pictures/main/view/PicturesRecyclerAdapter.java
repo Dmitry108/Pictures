@@ -53,6 +53,7 @@ public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHol
             super(itemView);
             imageView = itemView.findViewById(R.id.img_recycler_image);
             itemView.setOnLongClickListener((v -> {
+
                 listener.onItemClick(index);
                 return false;
             }));

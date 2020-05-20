@@ -6,8 +6,11 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.squareup.leakcanary.RefWatcher;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.bdim.pictures.application.PictureApp;
 import ru.bdim.pictures.detail.view.DetailActivity;
 
 import moxy.MvpAppCompatActivity;
@@ -32,6 +35,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
         ButterKnife.bind(this);
         initRecycler();
+        RefWatcher refWatcher = PictureApp.getRefWatcher();
+        refWatcher.watch(this);
     }
     private void initRecycler() {
         adapter = new PicturesRecyclerAdapter(presenter.getPictureRecyclerPresenter());
@@ -45,13 +50,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         startActivity(intent);
     }
+
     @Override
     public void notifyNewPictures() {
         adapter.notifyDataSetChanged();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        adapter.setListener(null);
     }
 }

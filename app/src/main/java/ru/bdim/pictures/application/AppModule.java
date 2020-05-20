@@ -17,11 +17,6 @@ public class AppModule {
 
     @Singleton
     @Provides
-    Model getModel(){
-        return new Model();
-    }
-    @Singleton
-    @Provides
     PictureDatabase getDatabase(){
         return Room.databaseBuilder(PictureApp.getInstance(), PictureDatabase.class, "pictures")
                 .build();

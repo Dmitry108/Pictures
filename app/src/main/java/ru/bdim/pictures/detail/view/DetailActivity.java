@@ -6,6 +6,7 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.ActionBar;
 
+import com.squareup.leakcanary.RefWatcher;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -13,6 +14,7 @@ import butterknife.ButterKnife;
 import moxy.MvpAppCompatActivity;
 import moxy.presenter.InjectPresenter;
 import ru.bdim.pictures.R;
+import ru.bdim.pictures.application.PictureApp;
 import ru.bdim.pictures.detail.presenter.DetailPresenter;
 
 public class DetailActivity extends MvpAppCompatActivity implements DetailView {
@@ -26,6 +28,10 @@ public class DetailActivity extends MvpAppCompatActivity implements DetailView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_picture);
+
+        RefWatcher refWatcher = PictureApp.getRefWatcher();
+        refWatcher.watch(this);
+
         ButterKnife.bind(this);
 
         ActionBar actionBar = getSupportActionBar();

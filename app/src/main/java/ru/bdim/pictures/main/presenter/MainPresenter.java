@@ -1,8 +1,10 @@
 package ru.bdim.pictures.main.presenter;
 
+import android.app.Activity;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,9 +18,12 @@ import moxy.MvpPresenter;
 import ru.bdim.pictures.application.PictureApp;
 import ru.bdim.pictures.main.view.IPictureViewHolder;
 import ru.bdim.pictures.main.view.MainView;
+import ru.bdim.pictures.model.data.DataInfo;
+import ru.bdim.pictures.model.database.PictureDatabase;
 import ru.bdim.pictures.model.database.PictureEntity;
+import ru.bdim.pictures.model.preferences.DatePreference;
 import ru.bdim.pictures.model.retrofit.HitRequest;
-import ru.bdim.pictures.model.Model;
+import ru.bdim.pictures.model.retrofit.PicturesRequester;
 
 import static ru.bdim.pictures.model.Const.TAG;
 
@@ -26,23 +31,30 @@ import static ru.bdim.pictures.model.Const.TAG;
 public class MainPresenter extends MvpPresenter<MainView> {
 
     @Inject
-    Model model;
+    PicturesRequester retrofit;
+    @Inject
+    DatePreference preferences;
+    @Inject
+    PictureDatabase database;
+    @Inject
+    DataInfo data;
 
-    private List<String> pictures;
     private PictureRecyclerPresenter recyclerPresenter;
 
     public MainPresenter(){
-        PictureApp.getComponent().inject(this);
         recyclerPresenter = new PictureRecyclerPresenter();
     }
 
     @Override
     protected void onFirstViewAttach() {
+        PictureApp.getComponent().inject(this);
         getPictures();
     }
 
     private void getPictures() {
-        if (model.isFirstTimePerDay()){
+        Date date = new Date();
+        if (!date.toString().equals(preferences.getSavedDate())){
+            preferences.saveDate(date);
             Log.d(TAG, "Скачивание из интернета");
             loadFromInternet();
 
@@ -51,13 +63,11 @@ public class MainPresenter extends MvpPresenter<MainView> {
             loadFromDatabase();
         }
     }
-
-    private void loadFromInternet() {
-        Observable<HitRequest> observable = model.loadFromInternet();
+    public void loadFromInternet() {
+        Observable<HitRequest> observable = retrofit.loadPictures();
         Disposable d = observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(request -> {
-                    pictures = request.getHits();
-                    model.initArray(pictures.size());
+                    setPictures(request.getHits());
                     updateDatabase();
                     getViewState().notifyNewPictures();
                 }, throwable -> {
@@ -65,15 +75,20 @@ public class MainPresenter extends MvpPresenter<MainView> {
                 });
     }
 
-    private void loadFromDatabase() {
-        Observable<List<PictureEntity>> observable = model.loadFromDatabase();
+    public void setPictures(List<String> list) {
+        data.setPictures(list);
+        data.initArray();
+    }
+
+    public void loadFromDatabase() {
+        Observable<List<PictureEntity>> observable = database.getDao().getAll();
         Disposable d = observable.observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list ->{
-                            pictures = new ArrayList<>();
-                            for (PictureEntity pic: list){
-                                pictures.add(pic.getUrl());
+                .subscribe(pics ->{
+                            List<String> list = new ArrayList<>();
+                            for (PictureEntity pic: pics){
+                                list.add(pic.getUrl());
                             }
-                            model.initArray(pictures.size());
+                            setPictures(list);
                             getViewState().notifyNewPictures();
                         }, throwable -> {
                             Log.d(TAG, throwable.toString());
@@ -82,7 +97,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     }
 
     private void updateDatabase() {
-        Disposable d = model.getDatabase().deleteAll()
+        Disposable d = database.getDao().deleteAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
@@ -93,10 +108,10 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     private void insertToDatabase() {
         List<PictureEntity> entities = new ArrayList<>();
-        for (String url: pictures){
+        for (String url: data.getPictures()){
             entities.add(new PictureEntity(url));
         }
-        Disposable d = model.getDatabase().addAll(entities)
+        Disposable d = database.getDao().addAll(entities)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(id -> Log.d(TAG, "Добавлены записи с id " + id),
@@ -104,7 +119,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     }
 
     public void setChoice(final int position) {
-        int f = model.setCurrentChoice(position, pictures.get(position));
+        int f = data.setCurrentChoice(position);
         Log.d(TAG, String.format("№%d - %d", position, f));
         getViewState().showPicture();
     }
@@ -117,16 +132,15 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
         @Override
         public void bindViewHolder(IPictureViewHolder holder) {
-            holder.setImage(pictures.get(holder.getIndex()));
+            holder.setImage(data.getPictures().get(holder.getIndex()));
         }
         @Override
         public int getItemCount() {
-            if (pictures == null){
+            if (data.getPictures() == null){
                 return 0;
             } else {
-                return pictures.size();
+                return data.getPictures().size();
             }
-
         }
     }
 }

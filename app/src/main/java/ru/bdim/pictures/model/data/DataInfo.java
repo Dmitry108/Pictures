@@ -5,29 +5,30 @@ import java.util.List;
 
 public class DataInfo {
 
-    private String pictureUrl;
+    private List<String> pictures;
     private List<Integer> frequencyList;
     private int currentPosition;
 
     public DataInfo(){
+        pictures = new ArrayList<>();
         frequencyList = new ArrayList<>();
     }
 
-    public void initArray(int count) {
-        for (int i = 0; i< count; i++){
+    public void setPictures(List<String> list){
+        pictures = list;
+    }
+    public List<String> getPictures(){
+        return pictures;
+    }
+    public void initArray() {
+        for (int i = 0; i< pictures.size(); i++){
             frequencyList.add(0);
         }
     }
-
-    public int setCurrentChoice (int position, String url) {
+    public int setCurrentChoice (int position) {
         currentPosition = position;
-        pictureUrl = url;
         frequencyList.set(position, frequencyList.get(position) + 1);
         return frequencyList.get(position);
-    }
-
-    public String getPicture(){
-        return pictureUrl;
     }
 
     public int getCurrentPosition(){

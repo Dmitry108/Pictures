@@ -2,18 +2,19 @@ package ru.bdim.pictures.application;
 
 import android.app.Application;
 
-import androidx.room.Room;
+import com.crashlytics.android.Crashlytics;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
-import ru.bdim.pictures.model.database.PictureDatabase;
-import ru.bdim.pictures.model.preferences.DatePreference;
+import io.fabric.sdk.android.Fabric;
+
 
 public class PictureApp extends Application {
 
     private static PictureApp instance;
     private static AppComponent component;
 
-//    private static PictureDatabase database;
-//    private static DatePreference preference;
+    private static RefWatcher refWatcher;
 
     public static PictureApp getInstance() {
         return instance;
@@ -22,30 +23,38 @@ public class PictureApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        database = Room.databaseBuilder(this, PictureDatabase.class, "pictures")
-//                .build();
-//        preference = new DatePreference(this);
         instance = this;
         component = createComponent();
+
+        setUpCrashlytics();
+        setUpLeakCanary();
+    }
+
+    private void setUpLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)){
+            return;
+        }
+        refWatcher = LeakCanary.install(this);
+    }
+
+    private void setUpCrashlytics() {
+        Fabric.with(this, new Crashlytics());
+    }
+
+    public static RefWatcher getRefWatcher() {
+        return refWatcher;
     }
 
     public static AppComponent getComponent(){
         return component;
     }
+
     private static AppComponent createComponent(){
         return DaggerAppComponent.builder().appModule(new AppModule()).build();
     }
 
-//    public static PictureDatabase getDatabase(){
-//        return database;
-//    }
-//    public static DatePreference getPreferences() {
-//        return preference;
-//    }
-
     @Override
     public void onTerminate() {
-//        database.close();
         instance = null;
         super.onTerminate();
     }

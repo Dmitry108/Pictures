@@ -1,4 +1,4 @@
-package ru.bdim.pictures.application;
+package ru.bdim.pictures.app;
 
 import javax.inject.Singleton;
 
@@ -7,8 +7,8 @@ import ru.bdim.pictures.detail.presenter.DetailPresenter;
 import ru.bdim.pictures.main.presenter.MainPresenter;
 
 @Singleton
-@Component(modules = {AppModule.class})
-public interface AppComponent {
+@Component(modules = {TestModule.class})
+public interface TestComponent {
     void inject(MainPresenter presenter);
     void inject(DetailPresenter presenter);
 }
