@@ -1,7 +1,5 @@
 package ru.bdim.pictures.detail.presenter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import javax.inject.Inject;

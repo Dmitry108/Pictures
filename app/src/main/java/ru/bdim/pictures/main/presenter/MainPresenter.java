@@ -11,7 +11,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import moxy.InjectViewState;
 import moxy.MvpPresenter;
@@ -40,9 +40,11 @@ public class MainPresenter extends MvpPresenter<MainView> {
     DataInfo data;
 
     private PictureRecyclerPresenter recyclerPresenter;
+    private CompositeDisposable disposable;
 
     public MainPresenter(){
         recyclerPresenter = new PictureRecyclerPresenter();
+        disposable = new CompositeDisposable();
     }
 
     @Override
@@ -63,16 +65,17 @@ public class MainPresenter extends MvpPresenter<MainView> {
             loadFromDatabase();
         }
     }
+
     public void loadFromInternet() {
         Observable<HitRequest> observable = retrofit.loadPictures();
-        Disposable d = observable.observeOn(AndroidSchedulers.mainThread())
+        disposable.add(observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(request -> {
                     setPictures(request.getHits());
                     updateDatabase();
                     getViewState().notifyNewPictures();
                 }, throwable -> {
                     Log.d(TAG, throwable.toString());
-                });
+                }));
     }
 
     public void setPictures(List<String> list) {
@@ -82,7 +85,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     public void loadFromDatabase() {
         Observable<List<PictureEntity>> observable = database.getDao().getAll();
-        Disposable d = observable.observeOn(AndroidSchedulers.mainThread())
+        disposable.add(observable.observeOn(AndroidSchedulers.mainThread())
                 .subscribe(pics ->{
                             List<String> list = new ArrayList<>();
                             for (PictureEntity pic: pics){
@@ -93,17 +96,17 @@ public class MainPresenter extends MvpPresenter<MainView> {
                         }, throwable -> {
                             Log.d(TAG, throwable.toString());
                             loadFromInternet();}
-                );
+                ));
     }
 
     private void updateDatabase() {
-        Disposable d = database.getDao().deleteAll()
+        disposable.add(database.getDao().deleteAll()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list -> {
                     Log.d(TAG, "Удалены записи с id " + list);
                     insertToDatabase();
-                }, e -> Log.d(TAG, e.toString()));
+                }, e -> Log.d(TAG, e.toString())));
     }
 
     private void insertToDatabase() {
@@ -111,11 +114,11 @@ public class MainPresenter extends MvpPresenter<MainView> {
         for (String url: data.getPictures()){
             entities.add(new PictureEntity(url));
         }
-        Disposable d = database.getDao().addAll(entities)
+        disposable.add(database.getDao().addAll(entities)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(id -> Log.d(TAG, "Добавлены записи с id " + id),
-                                e -> Log.d(TAG, e.toString()));
+                                e -> Log.d(TAG, e.toString())));
     }
 
     public void setChoice(final int position) {
@@ -142,5 +145,11 @@ public class MainPresenter extends MvpPresenter<MainView> {
                 return data.getPictures().size();
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
     }
 }

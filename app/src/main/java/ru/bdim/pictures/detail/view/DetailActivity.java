@@ -50,6 +50,7 @@ public class DetailActivity extends MvpAppCompatActivity implements DetailView {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void setPicture(String url) {
         Picasso.with(this).load(url).into(image);

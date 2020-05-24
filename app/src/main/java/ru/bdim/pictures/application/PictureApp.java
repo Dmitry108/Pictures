@@ -30,6 +30,14 @@ public class PictureApp extends Application {
         setUpLeakCanary();
     }
 
+    public static AppComponent getComponent(){
+        return component;
+    }
+
+    private static AppComponent createComponent(){
+        return DaggerAppComponent.builder().appModule(new AppModule()).build();
+    }
+
     private void setUpLeakCanary() {
         if (LeakCanary.isInAnalyzerProcess(this)){
             return;
@@ -43,14 +51,6 @@ public class PictureApp extends Application {
 
     public static RefWatcher getRefWatcher() {
         return refWatcher;
-    }
-
-    public static AppComponent getComponent(){
-        return component;
-    }
-
-    private static AppComponent createComponent(){
-        return DaggerAppComponent.builder().appModule(new AppModule()).build();
     }
 
     @Override
