@@ -16,7 +16,7 @@ public interface PictureDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<List<Long>> addAll(List<PictureEntity> pictureEntity);
 
-    @Query("DELETE FROM pictures WHERE id > 0")
+    @Query("DELETE FROM pictures")
     Single<Integer> deleteAll();
 
     @Query("SELECT * FROM pictures")

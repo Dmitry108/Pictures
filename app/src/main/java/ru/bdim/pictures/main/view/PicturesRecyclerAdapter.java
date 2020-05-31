@@ -27,7 +27,6 @@ public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHol
     @NonNull
     @Override
     public PictureViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_pictures, parent, false);
         return new PictureViewHolder(view);
     }
@@ -52,15 +51,12 @@ public class PicturesRecyclerAdapter extends RecyclerView.Adapter<PictureViewHol
         public PictureViewHolder(@NonNull final View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.img_recycler_image);
-            itemView.setOnLongClickListener((v -> {
-
+            itemView.setOnClickListener((v -> {
                 listener.onItemClick(index);
-                return false;
             }));
         }
         @Override
         public void setImage(String url) {
-            //PictureLoader.setPicture(url, imageView);
             Picasso.with(imageView.getContext()).load(url).into(imageView);
         }
         @Override

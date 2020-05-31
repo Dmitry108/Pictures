@@ -44,6 +44,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         recycler.setLayoutManager(manager);
         adapter.setListener(position -> presenter.setChoice(position));
         recycler.setAdapter(adapter);
+        recycler.addItemDecoration(new PicturesItemDecoration(50));
     }
     @Override
     public void showPicture() {
